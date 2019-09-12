@@ -2,15 +2,44 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <title>Hello World!</title>
+    <title>Редактировать index</title>
+    <link rel="stylesheet" href="style.css">
   </head>
   <body>
-    <h1>Hello World!</h1>
-    We are using Node.js <span id="node-version"></span>,
-    Chromium <span id="chrome-version"></span>,
-    and Electron <span id="electron-version"></span>.
-
+    <h1>Введите данные</h1>
+    <form action="">
+    	<label for="">
+    		<p>ID оффера</p>
+    		<input type="number" maxlength="4" minlength="4" name="offer_id" id="offer_id">
+    	</label>
+    	<label for="">
+    		<p>Цена</p>
+    		<input type="number" name="price" id="price">
+    	</label>
+    	<label for="">
+    		<span>Буржуйский</span>
+    		<input type="checkbox" name="foreign" id="foreign" value="false">
+    		
+    	</label>
+    	<input type="button" id="hey" value="Создать файлы">
+    </form>
+		
     <!-- You can also require other files to run in this process -->
     <script src="./renderer.js"></script>
+    <script>
+    	var myDialog = require('electron').remote; 
+    	var dialog = myDialog.dialog;
+    	const fs = require('fs');
+    	
+
+    	document.getElementById("hey").addEventListener("click", () => {
+    		let content = "New content";
+    		dialog.showSaveDialog((filename) => {
+
+    			makeFiles(filename);
+    			    			
+    		});   
+    	});
+    </script>
   </body>
 </html>
