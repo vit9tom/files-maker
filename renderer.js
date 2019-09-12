@@ -326,8 +326,7 @@ function makeFiles(filename) {
 		`
 
 	let politikaPath = filename + "/../politika.html";
-	fs.writeFileSync(politikaPath, politika);
-
+	
 	let userHTML = `<!-- saved from url=(0052)http://home-cheesemaker.online-shop2019.ru/user.html -->
 		<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
@@ -782,6 +781,9 @@ function makeFiles(filename) {
 		</div></body></html>`
 
 	let userPath = filename + "/../user.html";
-	fs.writeFileSync(userPath, userHTML);
 
+	if (!isForeign) {
+		fs.writeFileSync(userPath, userHTML);
+		fs.writeFileSync(politikaPath, politika);
+	}
 }	
