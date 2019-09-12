@@ -98,8 +98,27 @@ function makeFiles(filename) {
 	        let formClassEnd = s.indexOf(symbol, r);
 	        let formClasses = s.slice(r, formClassEnd); // извлекаем классы
 
+	        /************************************************/
+
+	        let indexOfId = s.indexOf('id');
+	        let checkStringId = s.substr(indexOfId, 5);
+	        let symbolId = undefined;
+
+	        if (checkStringId.includes('"')) {
+	            symbolId = '"';
+	        } else if (checkStringId.includes("'")) {
+	            symbolId = "'";
+	        }
+
+	        let formIdStart = s.indexOf(symbolId, indexOfId);
+	        let rId = formIdStart + 1;
+	        let formIdEnd = s.indexOf(symbolId, rId);
+	        let formId = s.slice(rId, formIdEnd); // извлекаем id
+
+	        /***********************************************/
+
 	        let formTagEnd = s.indexOf('>', 2);
-	        let newTag = '<form action="/success/" method="post" class="' + formClasses + '">';
+	        let newTag = '<form action="/success/" method="post" class="' + formClasses + '" id="' + formId + '">';
 
 	        let indexTagEnd = s.indexOf('>');
 	        let o = indexTagEnd + 1;
