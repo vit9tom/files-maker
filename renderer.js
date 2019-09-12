@@ -77,13 +77,40 @@ function makeFiles(filename) {
 
 	/* Все формы находятся по нечётным индексам. Достаём их и обрабатываем */
 
+	let submitAlt = 'Идет отправка данных';
+	if (isForeign) {
+		submitAlt = 'Wait...';
+	}
+
+	let submitValue = "Заказать";
+	let indexOfSubmit = afterHead.indexOf('submit');
+	let valueString = afterHead.substr(indexOfSubmit, 100);
+	let indexOfValue = afterHead.indexOf('value');
+	if (indexOfValue !== -1) {
+		let checkStringValue = afterHead.substr(indexOfValue, 10);
+		let valueSymbol = undefined;
+
+		if (checkStringValue.includes('"')) {
+		    valueSymbol = '"';
+		} else if (checkStringValue.includes("'")) {
+		    valueSymbol = "'";
+		}
+
+		let submitValueStart = afterHead.indexOf(valueSymbol, indexOfValue);
+		let rValue = submitValueStart + 1;
+		let submitValueEnd = afterHead.indexOf(valueSymbol, rValue);
+		submitValue = afterHead.slice(rValue, submitValueEnd); // извлекаем value
+	console.log(submitValue);
+	}
+
+
 	let reoladerStart = `
 			  <div class="reolader">
-				<input type="submit" value="Заказать" class="mm_button `;
+				<input type="submit" value="${submitValue}" class="mm_button `;
 	let reoladerEnd = `" onclick="checkFields(event, this);">
 				<div class="ajax_loader_block">
-					<img class="ajax_loader" src="/img/ajax-loader.gif" alt="Идет отправка данных"> 
-					<span class="ajax_loader">Идет отправка данных</span>
+					<img class="ajax_loader" src="/img/ajax-loader.gif" alt="${submitAlt}"> 
+					<span class="ajax_loader">${submitAlt}</span>
 				</div>
 			  </div`		  
 
