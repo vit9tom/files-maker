@@ -8,6 +8,9 @@ function makeFiles(filename) {
 	let isForeignInput = document.querySelector('input[id="foreign"]');
 	if (isForeignInput.checked) {isForeign = true};
 	let price = document.getElementById("price").value;
+	let isPromo = false;
+	let isPromoInput = document.querySelector('input[id="promo"]');
+	if (isPromoInput.checked) {isPromo = true};
 
 	let oldprice = price * 2;
 
@@ -16,8 +19,13 @@ function makeFiles(filename) {
 		foreign = ', "us"';
 	}
 
+	let ltPath = '/var/www/online-shop2019/data/www/online-shop2019.ru/leadtrade.php';
+	if (isPromo) {
+		ltPath = '/var/www/promo-2018.ru/data/www/promo-2018.ru/leadtrade.php'
+	}
+
 	let requireContent = `<?php
-	    require "/var/www/online-shop2019/data/www/online-shop2019.ru/leadtrade.php";
+	    require "${ltPath}";
 	    $offer_id  = ${currentOffer}; 
 	    $land = new \\lt\\Landing($offer_id${foreign});
 	    $validData = $land->getUserData();
@@ -263,7 +271,7 @@ function makeFiles(filename) {
 	
 	/* Делаем success */
 
-	let success = `<?php require "/var/www/online-shop2019/data/www/online-shop2019.ru/leadtrade.php";
+	let success = `<?php require "${ltPath}";
 
 					$offer_id  = ${currentOffer};
 					$land = new \\lt\\Landing($offer_id${foreign});
