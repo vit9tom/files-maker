@@ -26,6 +26,15 @@
         </label>
     	<input type="button" id="hey" value="Создать файлы">
     </form>
+
+    <h2>Транзитка</h2>
+    <form action="">
+        <label for="">
+            <p></p>
+            <input type="text" id="LP">
+        </label>
+        <input type="button" id="tranzitka" value="Создать файлы">
+    </form>
 		
     <!-- You can also require other files to run in this process -->
     <script src="./renderer.js"></script>
@@ -36,7 +45,7 @@
     	
 
     	document.getElementById("hey").addEventListener("click", () => {
-    		let content = "New content";
+    		
     		dialog.showSaveDialog((filename) => {
 
     			makeFiles(filename);

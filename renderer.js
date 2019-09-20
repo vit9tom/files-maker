@@ -82,6 +82,8 @@ function makeFiles(filename) {
 		submitAlt = 'Wait...';
 	}
 
+	// Сохраняем value сабмита
+
 	let submitValue = "Заказать";
 	let indexOfSubmit = afterHead.indexOf('submit');
 	let valueString = afterHead.substr(indexOfSubmit, 100);
@@ -100,9 +102,24 @@ function makeFiles(filename) {
 		let rValue = submitValueStart + 1;
 		let submitValueEnd = afterHead.indexOf(valueSymbol, rValue);
 		submitValue = afterHead.slice(rValue, submitValueEnd); // извлекаем value
-	console.log(submitValue);
 	}
 
+	for (var i = 0; i < contentMassive.length; i++) {
+	    if(i % 2 === 1) {
+	    	let string = contentMassive[i];
+	    	let buttonPos = string.indexOf('<button');
+	    	if (buttonPos !== -1) {
+	    		
+	    		let buttonFirstEnd = string.indexOf('>', buttonPos)
+	    		let buttonInnerPos = buttonFirstEnd + 1;
+	    		let buttonSecondStart = string.indexOf('<', buttonInnerPos);
+	    		submitValue = string.slice(buttonInnerPos, buttonSecondStart);
+	    		// console.log(string);
+	    		// console.log(submitValue);
+	    		// console.log(buttonInnerPos);
+	    	}
+	    }
+	}    
 
 	let reoladerStart = `
 			  <div class="reolader">
@@ -117,39 +134,45 @@ function makeFiles(filename) {
 	for (var i = 0; i < contentMassive.length; i++) {
 	    if(i % 2 === 1) {
 	        s = contentMassive[i]; // это форма в виде строки
+	        let formClasses = '';
+	        let indexOfClass = s.indexOf(' class');
+	        if (indexOfClass !== -1) {
+	        	let checkString = s.substr(indexOfClass, 10);
+	        	let symbol = undefined;
 
-	        let indexOfClass = s.indexOf('class');
-	        let checkString = s.substr(indexOfClass, 10);
-	        let symbol = undefined;
+	        	if (s.substr(indexOfClass, 10).includes('"')) {
+	        	    symbol = '"';
+	        	} else if (s.substr(indexOfClass, 10).includes("'")) {
+	        	    symbol = "'";
+	        	}
 
-	        if (checkString.includes('"')) {
-	            symbol = '"';
-	        } else if (checkString.includes("'")) {
-	            symbol = "'";
+	        	let formClassStart = s.indexOf(symbol, indexOfClass);
+	        	let r = formClassStart + 1;
+	        	let formClassEnd = s.indexOf(symbol, r);
+	        	formClasses = s.slice(r, formClassEnd); // извлекаем классы
 	        }
-
-	        let formClassStart = s.indexOf(symbol, indexOfClass);
-	        let r = formClassStart + 1;
-	        let formClassEnd = s.indexOf(symbol, r);
-	        let formClasses = s.slice(r, formClassEnd); // извлекаем классы
+	        
 
 	        /************************************************/
 
-	        let indexOfId = s.indexOf('id');
-	        let checkStringId = s.substr(indexOfId, 5);
-	        let symbolId = undefined;
+	        let formId = '';
+	        let indexOfId = s.indexOf(' id');
+	        if (indexOfId !== -1) {
+	        	let checkStringId = s.substr(indexOfId, 5);
+	        	let symbolId = undefined;
 
-	        if (checkStringId.includes('"')) {
-	            symbolId = '"';
-	        } else if (checkStringId.includes("'")) {
-	            symbolId = "'";
+	        	if (s.substr(indexOfId, 5).includes('"')) {
+	        	    symbolId = '"';
+	        	} else if (s.substr(indexOfId, 5).includes("'")) {
+	        	    symbolId = "'";
+	        	}
+
+	        	let formIdStart = s.indexOf(symbolId, indexOfId);
+	        	let rId = formIdStart + 1;
+	        	let formIdEnd = s.indexOf(symbolId, rId);
+	        	formId = s.slice(rId, formIdEnd); // извлекаем id
 	        }
-
-	        let formIdStart = s.indexOf(symbolId, indexOfId);
-	        let rId = formIdStart + 1;
-	        let formIdEnd = s.indexOf(symbolId, rId);
-	        let formId = s.slice(rId, formIdEnd); // извлекаем id
-
+	        
 	        /***********************************************/
 
 	        let formTagEnd = s.indexOf('>', 2);
@@ -234,20 +257,25 @@ function makeFiles(filename) {
 
 	        	let buttonTag = newFormArray[indexOfButton];
 
+	        	let buttonClasses = '';
 	        	indexOfClass = buttonTag.indexOf('class');
-	        	checkString = buttonTag.substr(indexOfClass, 10);
-	        	symbol = undefined;
+	        	if (indexOfClass !== -1) {
+	        		checkString = buttonTag.substr(indexOfClass, 10);
+	        		symbol = undefined;
 
-	        	if (checkString.includes('"')) {
-	        	    symbol = '"';
-	        	} else if (checkString.includes("'")) {
-	        	    symbol = "'";
+	        		if (checkString.includes('"')) {
+	        		    symbol = '"';
+	        		} else if (checkString.includes("'")) {
+	        		    symbol = "'";
+	        		}
+
+	        		let buttonClassStart = buttonTag.indexOf(symbol, indexOfClass);
+	        		r = buttonClassStart + 1;
+	        		let buttonClassEnd = buttonTag.indexOf(symbol, r);
+	        		buttonClasses = buttonTag.slice(r, buttonClassEnd); // извлекаем классы
 	        	}
-
-	        	let buttonClassStart = buttonTag.indexOf(symbol, indexOfClass);
-	        	r = buttonClassStart + 1;
-	        	let buttonClassEnd = buttonTag.indexOf(symbol, r);
-	        	let buttonClasses = buttonTag.slice(r, buttonClassEnd); // извлекаем классы
+	        	
+	        	console.log(buttonClasses);
 
 	        	let reolader = reoladerStart + buttonClasses + reoladerEnd;
 	        	newFormArray.splice(indexOfButton, spliceCount, reolader);
@@ -821,4 +849,135 @@ function makeFiles(filename) {
 		fs.writeFileSync(userPath, userHTML);
 		fs.writeFileSync(politikaPath, politika);
 	}
+}
+
+function makeTranzit(tranzitFilename) {
+	let lp = document.getElementById("LP").value;
+	let exitHTML = `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+		<html xmlns="http://www.w3.org/1999/xhtml">
+		<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+		<?php
+		$getstr = array();
+		    if(!empty($_COOKIE))
+		    {
+		        foreach($_COOKIE as $gkey=>$gval) {
+		            if(!is_array($gkey) && !is_array($gval))
+		            {
+		                $getstr[] = $gkey.'='.$gval;
+		            }
+		        }
+		    } elseif (!empty($_GET)) {
+		        foreach($_GET as $gkey=>$gval) {
+		            $getstr[] = $gkey.'='.$gval;
+		        }
+		    }
+		    $getstr = implode('&',$getstr);
+		    $link = "${lp}?".$getstr; // Сюда нужный ленд
+		?>
+
+
+		<title></title>
+
+
+		<link rel="icon" href="favicon1.ico">
+
+
+		<link rel="stylesheet" type="text/css" href="index.css" media="all">
+
+
+
+
+		<meta http-equiv="refresh" content="0; url=<?php echo $link; ?>">
+
+		</head>
+
+
+		<body>
+
+		<!-- Yandex.Metrika counter -->
+		<script type="text/javascript" >
+		    (function (d, w, c) {
+		        (w[c] = w[c] || []).push(function() {
+		            try {
+		                w.yaCounter49959280 = new Ya.Metrika2({
+		                    id:49959280,
+		                    clickmap:true,
+		                    trackLinks:true,
+		                    accurateTrackBounce:true,
+		                    webvisor:true
+		                });
+		            } catch(e) { }
+		        });
+
+		        var n = d.getElementsByTagName("script")[0],
+		            s = d.createElement("script"),
+		            f = function () { n.parentNode.insertBefore(s, n); };
+		        s.type = "text/javascript";
+		        s.async = true;
+		        s.src = "https://mc.yandex.ru/metrika/tag.js";
+
+		        if (w.opera == "[object Opera]") {
+		            d.addEventListener("DOMContentLoaded", f, false);
+		        } else { f(); }
+		    })(document, window, "yandex_metrika_callbacks2");
+		</script>
+		<noscript><div><img src="https://mc.yandex.ru/watch/49959280" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+		<!-- /Yandex.Metrika counter -->
+		</body>
+		</html>`;
+	let exitPath = tranzitFilename + "/../exit.php";
+	fs.writeFileSync(exitPath, exitHTML);
+
+	let indexHTML = fs.readFileSync(tranzitFilename, "utf8");
+
+	let indexArray = '';
+	let indexPHP = `<?php
+						$params = array();
+					        if(isset($_GET)) {
+					            $f = fopen('transit.txt', 'a+');
+					            $getstr = array();
+					            foreach($_GET as $gkey=>$gval) {
+					                $getstr[] = $gkey.'='.$gval;
+					            }
+					            fputs($f, date('Y-m-d H:i:s').'---'.implode('&',$getstr).chr(10).chr(10));
+					            $expire = (isset($_GET['ltpostclick']))?(int)$_GET['ltpostclick']:0;
+					            foreach($_GET as $key=>$val) {
+					                $params[$key] = $val;
+					                if($expire) {
+					                    setcookie($key, $val, $expire);        
+					                } else {            
+					                    setcookie($key, $val);
+					                }   
+					            }
+					        }
+					        if(sizeof($_COOKIE) > 0) {
+					            foreach($_COOKIE as $ckey=>$cval) {     
+					                $params[$ckey] = $cval; 
+					            }
+					        }
+					        $pars = '';
+					        foreach($params as $pkey=>$pval) {  
+							$pars .= '&'.$pkey.'='.$pval;
+						}
+						$pars = trim($pars, '&');
+						$url = '${lp}' . (($pars != '')?'?'.$pars:'');
+						/* <?php echo $url; ?> */
+					?>
+					`;
+	let indexAll = indexPHP + indexHTML;
+	let indexPath = tranzitFilename + "/../index.php";
+	fs.writeFileSync(indexPath, indexAll);
+
+	alert('done');
 }	
+
+document.getElementById("tranzitka").addEventListener("click", () => {
+	
+	dialog.showSaveDialog((tranzitFilename) => {
+
+		makeTranzit(tranzitFilename);
+		    			
+	});   
+});
